@@ -1,23 +1,20 @@
-# Usa una imagen oficial de Ruby como base
+# Usa una imagen base oficial de Ruby
 FROM ruby:3.2
 
-# Establece el directorio de trabajo dentro del contenedor
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Configura DNS si es necesario
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+# Copia los archivos del proyecto al contenedor
+COPY Gemfile* ./
 
-# Copia el archivo Gemfile y Gemfile.lock al contenedor
-COPY Gemfile Gemfile.lock ./
+# Instala las dependencias
+RUN bundle install
 
-# Instala las dependencias definidas en el Gemfile
-RUN for i in 1 2 3 4 5; do bundle install && break || sleep 15; done
-
-# Copia el resto de la aplicación al contenedor
+# Copia el resto de la aplicación
 COPY . .
 
-# Expone el puerto donde correrá la aplicación
+# Expón el puerto en el que correrá la aplicación (si es necesario)
 EXPOSE 4567
 
-# Comando para ejecutar la aplicación usando puma y rackup
-CMD ["bundle", "exec", "rackup", "--host", "0.0.0.0"]
+# Comando para ejecutar la aplicación (ajusta esto según tu script)
+CMD ["ruby", "server.rb"]
